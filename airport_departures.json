@@ -13,7 +13,7 @@
             "plugin-setting": {
                 "schedule": {
                     "mode": "departures",
-                    "timestamp": 1728684572
+                    "timestamp": 1728688629
                 },
                 "satelliteImage": {
                     "scale": 1
@@ -128,15 +128,15 @@
                     "schedule": {
                         "departures": {
                             "item": {
-                                "current": 77,
-                                "total": 77,
+                                "current": 78,
+                                "total": 78,
                                 "limit": 100
                             },
                             "page": {
                                 "current": 1,
                                 "total": 1
                             },
-                            "timestamp": 1728687900,
+                            "timestamp": 1728688620,
                             "data": [
                                 {
                                     "flight": {
@@ -2779,12 +2779,12 @@
                                                 "default": "FR2871",
                                                 "alternative": "RR2871"
                                             },
-                                            "callsign": null,
+                                            "callsign": "RYR38ZH",
                                             "codeshare": null
                                         },
                                         "status": {
                                             "live": false,
-                                            "text": "Estimated dep 09:10",
+                                            "text": "Estimated dep 09:20",
                                             "icon": "green",
                                             "estimated": null,
                                             "ambiguous": false,
@@ -2796,22 +2796,42 @@
                                                     "diverted": null
                                                 },
                                                 "eventTime": {
-                                                    "utc": 1728713400,
-                                                    "local": 1728724200
+                                                    "utc": 1728714000,
+                                                    "local": 1728724800
                                                 }
                                             }
                                         },
                                         "aircraft": {
                                             "model": {
-                                                "code": "73H",
-                                                "text": ""
+                                                "code": "B738",
+                                                "text": "Boeing 737-8AS"
                                             },
-                                            "hex": "",
-                                            "registration": "",
-                                            "serialNo": "",
-                                            "images": null
+                                            "registration": "SP-RSI",
+                                            "country": {
+                                                "id": 176,
+                                                "name": "Poland",
+                                                "alpha2": "PL",
+                                                "alpha3": "POL"
+                                            },
+                                            "hex": "48C228",
+                                            "restricted": false,
+                                            "serialNo": null,
+                                            "age": {
+                                                "availability": true
+                                            },
+                                            "availability": {
+                                                "serialNo": true,
+                                                "age": true
+                                            }
                                         },
-                                        "owner": null,
+                                        "owner": {
+                                            "name": "Buzz",
+                                            "code": {
+                                                "iata": "RR",
+                                                "icao": "RYS"
+                                            },
+                                            "logo": "https://images.flightradar24.com/assets/airlines/logotypes/587.png"
+                                        },
                                         "airline": {
                                             "name": "Ryanair",
                                             "code": {
@@ -2879,7 +2899,7 @@
                                                 "arrival": null
                                             },
                                             "estimated": {
-                                                "departure": 1728713400,
+                                                "departure": 1728714000,
                                                 "arrival": null
                                             },
                                             "other": {
@@ -6085,15 +6105,35 @@
                                         },
                                         "aircraft": {
                                             "model": {
-                                                "code": "320",
-                                                "text": ""
+                                                "code": "A320",
+                                                "text": "Airbus A320-232"
                                             },
-                                            "hex": "",
-                                            "registration": "",
-                                            "serialNo": "",
-                                            "images": null
+                                            "registration": "HA-LWQ",
+                                            "country": {
+                                                "id": 100,
+                                                "name": "Hungary",
+                                                "alpha2": "HU",
+                                                "alpha3": "HUN"
+                                            },
+                                            "hex": "471F58",
+                                            "restricted": false,
+                                            "serialNo": null,
+                                            "age": {
+                                                "availability": true
+                                            },
+                                            "availability": {
+                                                "serialNo": true,
+                                                "age": true
+                                            }
                                         },
-                                        "owner": null,
+                                        "owner": {
+                                            "name": "Wizz Air",
+                                            "code": {
+                                                "iata": "W6",
+                                                "icao": "WZZ"
+                                            },
+                                            "logo": "https://images.flightradar24.com/assets/airlines/logotypes/7.png"
+                                        },
                                         "airline": {
                                             "name": "Wizz Air",
                                             "code": {
@@ -10087,6 +10127,147 @@
                                             }
                                         }
                                     }
+                                },
+                                {
+                                    "flight": {
+                                        "identification": {
+                                            "id": null,
+                                            "row": 5574928054,
+                                            "number": {
+                                                "default": "SN2372",
+                                                "alternative": null
+                                            },
+                                            "callsign": null,
+                                            "codeshare": [
+                                                "BT5371"
+                                            ]
+                                        },
+                                        "status": {
+                                            "live": false,
+                                            "text": "Scheduled",
+                                            "icon": null,
+                                            "estimated": null,
+                                            "ambiguous": false,
+                                            "generic": {
+                                                "status": {
+                                                    "text": "scheduled",
+                                                    "type": "departure",
+                                                    "color": "gray",
+                                                    "diverted": null
+                                                },
+                                                "eventTime": {
+                                                    "utc": null,
+                                                    "local": null
+                                                }
+                                            }
+                                        },
+                                        "aircraft": {
+                                            "model": {
+                                                "code": "A319",
+                                                "text": "Airbus A319-111"
+                                            },
+                                            "registration": "OO-SSV",
+                                            "country": {
+                                                "id": 22,
+                                                "name": "Belgium",
+                                                "alpha2": "BE",
+                                                "alpha3": "BEL"
+                                            },
+                                            "hex": "44CE76",
+                                            "restricted": false,
+                                            "serialNo": null,
+                                            "age": {
+                                                "availability": true
+                                            },
+                                            "availability": {
+                                                "serialNo": true,
+                                                "age": true
+                                            }
+                                        },
+                                        "owner": {
+                                            "name": "Brussels Airlines",
+                                            "code": {
+                                                "iata": "SN",
+                                                "icao": "BEL"
+                                            },
+                                            "logo": "https://images.flightradar24.com/assets/airlines/logotypes/51.png"
+                                        },
+                                        "airline": {
+                                            "name": "Brussels Airlines",
+                                            "code": {
+                                                "iata": "SN",
+                                                "icao": "BEL"
+                                            },
+                                            "short": "Brussels Airlines"
+                                        },
+                                        "airport": {
+                                            "origin": {
+                                                "timezone": {
+                                                    "name": "Europe/Vilnius",
+                                                    "offset": 10800,
+                                                    "abbr": "EEST",
+                                                    "abbrName": "Eastern European Summer Time",
+                                                    "isDst": true
+                                                },
+                                                "info": {
+                                                    "terminal": null,
+                                                    "baggage": null,
+                                                    "gate": null
+                                                }
+                                            },
+                                            "destination": {
+                                                "code": {
+                                                    "iata": "BRU",
+                                                    "icao": "EBBR"
+                                                },
+                                                "timezone": {
+                                                    "name": "Europe/Brussels",
+                                                    "offset": 7200,
+                                                    "abbr": "CEST",
+                                                    "abbrName": "Central European Summer Time",
+                                                    "isDst": true
+                                                },
+                                                "info": {
+                                                    "terminal": null,
+                                                    "baggage": null,
+                                                    "gate": null
+                                                },
+                                                "name": "Brussels Airport",
+                                                "position": {
+                                                    "latitude": 50.901379,
+                                                    "longitude": 4.484444,
+                                                    "country": {
+                                                        "name": "Belgium",
+                                                        "code": "BE",
+                                                        "id": 22
+                                                    },
+                                                    "region": {
+                                                        "city": "Brussels"
+                                                    }
+                                                },
+                                                "visible": true
+                                            },
+                                            "real": null
+                                        },
+                                        "time": {
+                                            "scheduled": {
+                                                "departure": 1728817800,
+                                                "arrival": 1728826800
+                                            },
+                                            "real": {
+                                                "departure": null,
+                                                "arrival": null
+                                            },
+                                            "estimated": {
+                                                "departure": null,
+                                                "arrival": null
+                                            },
+                                            "other": {
+                                                "eta": null,
+                                                "duration": null
+                                            }
+                                        }
+                                    }
                                 }
                             ]
                         }
@@ -10221,6 +10402,13 @@
                         "code": {
                             "iata": "BA",
                             "icao": "BAW"
+                        }
+                    },
+                    "BT": {
+                        "name": "Air Baltic",
+                        "code": {
+                            "iata": "BT",
+                            "icao": "BTI"
                         }
                     },
                     "DL": {
@@ -11984,6 +12172,107 @@
                     }
                 },
                 {
+                    "registration": "SP-RSI",
+                    "images": {
+                        "thumbnails": [
+                            {
+                                "src": "https://cdn.jetphotos.com/200/5/611091_1720724975_tb.jpg?v=0",
+                                "link": "https://www.jetphotos.com/photo/11409113",
+                                "copyright": "Rickard Andersson ",
+                                "source": "Jetphotos.com"
+                            },
+                            {
+                                "src": "https://cdn.jetphotos.com/200/5/1337563_1712610419_tb.jpg?v=0",
+                                "link": "https://www.jetphotos.com/photo/11310289",
+                                "copyright": "EVRA spotter",
+                                "source": "Jetphotos.com"
+                            },
+                            {
+                                "src": "https://cdn.jetphotos.com/200/6/395161_1705323596_tb.jpg?v=0",
+                                "link": "https://www.jetphotos.com/photo/11211177",
+                                "copyright": "Laszlo Striteczky",
+                                "source": "Jetphotos.com"
+                            },
+                            {
+                                "src": "https://cdn.jetphotos.com/200/6/1130255_1699780811_tb.jpg?v=0",
+                                "link": "https://www.jetphotos.com/photo/11151968",
+                                "copyright": "Horváth Gábor",
+                                "source": "Jetphotos.com"
+                            },
+                            {
+                                "src": "https://cdn.jetphotos.com/200/6/877302_1697722371_tb.jpg?v=0",
+                                "link": "https://www.jetphotos.com/photo/11127056",
+                                "copyright": "Michael Musil",
+                                "source": "Jetphotos.com"
+                            }
+                        ],
+                        "medium": [
+                            {
+                                "src": "https://cdn.jetphotos.com/400/5/611091_1720724975.jpg?v=0",
+                                "link": "https://www.jetphotos.com/photo/11409113",
+                                "copyright": "Rickard Andersson ",
+                                "source": "Jetphotos.com"
+                            },
+                            {
+                                "src": "https://cdn.jetphotos.com/400/5/1337563_1712610419.jpg?v=0",
+                                "link": "https://www.jetphotos.com/photo/11310289",
+                                "copyright": "EVRA spotter",
+                                "source": "Jetphotos.com"
+                            },
+                            {
+                                "src": "https://cdn.jetphotos.com/400/6/395161_1705323596.jpg?v=0",
+                                "link": "https://www.jetphotos.com/photo/11211177",
+                                "copyright": "Laszlo Striteczky",
+                                "source": "Jetphotos.com"
+                            },
+                            {
+                                "src": "https://cdn.jetphotos.com/400/6/1130255_1699780811.jpg?v=0",
+                                "link": "https://www.jetphotos.com/photo/11151968",
+                                "copyright": "Horváth Gábor",
+                                "source": "Jetphotos.com"
+                            },
+                            {
+                                "src": "https://cdn.jetphotos.com/400/6/877302_1697722371.jpg?v=0",
+                                "link": "https://www.jetphotos.com/photo/11127056",
+                                "copyright": "Michael Musil",
+                                "source": "Jetphotos.com"
+                            }
+                        ],
+                        "large": [
+                            {
+                                "src": "https://cdn.jetphotos.com/640cb/5/611091_1720724975.jpg?v=0",
+                                "link": "https://www.jetphotos.com/photo/11409113",
+                                "copyright": "Rickard Andersson ",
+                                "source": "Jetphotos.com"
+                            },
+                            {
+                                "src": "https://cdn.jetphotos.com/640cb/5/1337563_1712610419.jpg?v=0",
+                                "link": "https://www.jetphotos.com/photo/11310289",
+                                "copyright": "EVRA spotter",
+                                "source": "Jetphotos.com"
+                            },
+                            {
+                                "src": "https://cdn.jetphotos.com/640cb/6/395161_1705323596.jpg?v=0",
+                                "link": "https://www.jetphotos.com/photo/11211177",
+                                "copyright": "Laszlo Striteczky",
+                                "source": "Jetphotos.com"
+                            },
+                            {
+                                "src": "https://cdn.jetphotos.com/640cb/6/1130255_1699780811.jpg?v=0",
+                                "link": "https://www.jetphotos.com/photo/11151968",
+                                "copyright": "Horváth Gábor",
+                                "source": "Jetphotos.com"
+                            },
+                            {
+                                "src": "https://cdn.jetphotos.com/640cb/6/877302_1697722371.jpg?v=0",
+                                "link": "https://www.jetphotos.com/photo/11127056",
+                                "copyright": "Michael Musil",
+                                "source": "Jetphotos.com"
+                            }
+                        ]
+                    }
+                },
+                {
                     "registration": "OH-ATN",
                     "images": {
                         "thumbnails": [
@@ -12584,6 +12873,107 @@
                                 "src": "https://cdn.jetphotos.com/640cb/6/838156_1687295770.jpg?v=0",
                                 "link": "https://www.jetphotos.com/photo/11003753",
                                 "copyright": "Oleksiy Naumov",
+                                "source": "Jetphotos.com"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "registration": "OO-SSV",
+                    "images": {
+                        "thumbnails": [
+                            {
+                                "src": "https://cdn.jetphotos.com/200/5/933121_1726766481_tb.jpg?v=0",
+                                "link": "https://www.jetphotos.com/photo/11483914",
+                                "copyright": "RAFAL KUKOWSKI",
+                                "source": "Jetphotos.com"
+                            },
+                            {
+                                "src": "https://cdn.jetphotos.com/200/5/1610947_1724175632_tb.jpg?v=0",
+                                "link": "https://www.jetphotos.com/photo/11450655",
+                                "copyright": "Julian S.",
+                                "source": "Jetphotos.com"
+                            },
+                            {
+                                "src": "https://cdn.jetphotos.com/200/6/927163_1723482339_tb.jpg?v=0",
+                                "link": "https://www.jetphotos.com/photo/11442663",
+                                "copyright": "Benjamin Exenberger",
+                                "source": "Jetphotos.com"
+                            },
+                            {
+                                "src": "https://cdn.jetphotos.com/200/6/1012308_1724119448_tb.jpg?v=0",
+                                "link": "https://www.jetphotos.com/photo/11450122",
+                                "copyright": "Antoni Saridis",
+                                "source": "Jetphotos.com"
+                            },
+                            {
+                                "src": "https://cdn.jetphotos.com/200/6/537962_1723881420_tb.jpg?v=0",
+                                "link": "https://www.jetphotos.com/photo/11447129",
+                                "copyright": "Gabriele Fontana - Tuscan Aviation",
+                                "source": "Jetphotos.com"
+                            }
+                        ],
+                        "medium": [
+                            {
+                                "src": "https://cdn.jetphotos.com/400/5/933121_1726766481.jpg?v=0",
+                                "link": "https://www.jetphotos.com/photo/11483914",
+                                "copyright": "RAFAL KUKOWSKI",
+                                "source": "Jetphotos.com"
+                            },
+                            {
+                                "src": "https://cdn.jetphotos.com/400/5/1610947_1724175632.jpg?v=0",
+                                "link": "https://www.jetphotos.com/photo/11450655",
+                                "copyright": "Julian S.",
+                                "source": "Jetphotos.com"
+                            },
+                            {
+                                "src": "https://cdn.jetphotos.com/400/6/927163_1723482339.jpg?v=0",
+                                "link": "https://www.jetphotos.com/photo/11442663",
+                                "copyright": "Benjamin Exenberger",
+                                "source": "Jetphotos.com"
+                            },
+                            {
+                                "src": "https://cdn.jetphotos.com/400/6/1012308_1724119448.jpg?v=0",
+                                "link": "https://www.jetphotos.com/photo/11450122",
+                                "copyright": "Antoni Saridis",
+                                "source": "Jetphotos.com"
+                            },
+                            {
+                                "src": "https://cdn.jetphotos.com/400/6/537962_1723881420.jpg?v=0",
+                                "link": "https://www.jetphotos.com/photo/11447129",
+                                "copyright": "Gabriele Fontana - Tuscan Aviation",
+                                "source": "Jetphotos.com"
+                            }
+                        ],
+                        "large": [
+                            {
+                                "src": "https://cdn.jetphotos.com/640cb/5/933121_1726766481.jpg?v=0",
+                                "link": "https://www.jetphotos.com/photo/11483914",
+                                "copyright": "RAFAL KUKOWSKI",
+                                "source": "Jetphotos.com"
+                            },
+                            {
+                                "src": "https://cdn.jetphotos.com/640cb/5/1610947_1724175632.jpg?v=0",
+                                "link": "https://www.jetphotos.com/photo/11450655",
+                                "copyright": "Julian S.",
+                                "source": "Jetphotos.com"
+                            },
+                            {
+                                "src": "https://cdn.jetphotos.com/640cb/6/927163_1723482339.jpg?v=0",
+                                "link": "https://www.jetphotos.com/photo/11442663",
+                                "copyright": "Benjamin Exenberger",
+                                "source": "Jetphotos.com"
+                            },
+                            {
+                                "src": "https://cdn.jetphotos.com/640cb/6/1012308_1724119448.jpg?v=0",
+                                "link": "https://www.jetphotos.com/photo/11450122",
+                                "copyright": "Antoni Saridis",
+                                "source": "Jetphotos.com"
+                            },
+                            {
+                                "src": "https://cdn.jetphotos.com/640cb/6/537962_1723881420.jpg?v=0",
+                                "link": "https://www.jetphotos.com/photo/11447129",
+                                "copyright": "Gabriele Fontana - Tuscan Aviation",
                                 "source": "Jetphotos.com"
                             }
                         ]

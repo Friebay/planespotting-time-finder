@@ -4,8 +4,8 @@ from datetime import datetime, timezone
 import time
 
 # Load the JSON files for arrivals and departures
-arrivals_file_path = 'C:/Users/zabit/Documents/GitHub/planespotting-time-finder/airport_arrival.json'
-departures_file_path = 'C:/Users/zabit/Documents/GitHub/planespotting-time-finder/airport_departure.json'
+arrivals_file_path = 'C:/Users/zabit/Documents/GitHub/planespotting-time-finder/airport_arrivals.json'
+departures_file_path = 'C:/Users/zabit/Documents/GitHub/planespotting-time-finder/airport_departures.json'
 
 # Connect to SQLite database and save it in the specified folder
 db_path = 'C:/Users/zabit/Documents/GitHub/planespotting-time-finder/vilnius_airport.db'
@@ -81,55 +81,78 @@ def check_and_update_flight(flight_type, flight):
                               WHERE airline=? AND origin_or_destination=? AND scheduled_time=? AND flight_type=?''',
                            (estimated_time, actual_time, status_live, status_text, status_icon, last_update_time,
                             airline, origin_or_destination, scheduled_time, flight_type))
-            return 'updated'
+            return 'updated', {
+                'flight_type': flight_type,
+                'airline': airline,
+                'scheduled_time': scheduled_time,
+                'actual_time': actual_time,
+                'status_live': status_live,
+                'status_text': status_text,
+                'status_icon': status_icon
+            }
         else:
-            return 'unchanged'
+            return 'unchanged', None
     else:
         # Insert new flight
         cursor.execute('''INSERT INTO flights (flight_type, airline, aircraft_model, registration, origin_or_destination, scheduled_time, estimated_time, actual_time, status_live, status_text, status_icon, last_update_time, data_input_time)
                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
                        (flight_type, airline, aircraft_model, registration, origin_or_destination, scheduled_time, estimated_time, actual_time, status_live, status_text, status_icon,
                         last_update_time, last_update_time))
-        return 'added'
+        return 'added', {
+            'flight_type': flight_type,
+            'airline': airline,
+            'scheduled_time': scheduled_time,
+            'actual_time': actual_time,
+            'status_live': status_live,
+            'status_text': status_text,
+            'status_icon': status_icon
+        }
 
 # Function to load and process flights
 def process_flights():
-    # Counters for added, updated, and unchanged flights
-    added_count = 0
-    updated_count = 0
-    unchanged_count = 0
+    # Lists to track added and updated flights
+    added_flights = []
+    updated_flights = []
 
     # Load and process arrivals data
-    with open(arrivals_file_path, 'r') as arrivals_file:
+    with open(arrivals_file_path, 'r', encoding='utf-8') as arrivals_file:
         arrivals_data = json.load(arrivals_file)
         arrivals_flights = arrivals_data['result']['response']['airport']['pluginData']['schedule']['arrivals']['data']
         for flight in arrivals_flights:
-            result = check_and_update_flight('arrival', flight)
+            result, flight_info = check_and_update_flight('arrival', flight)
             if result == 'added':
-                added_count += 1
+                added_flights.append(flight_info)
             elif result == 'updated':
-                updated_count += 1
-            else:
-                unchanged_count += 1
+                updated_flights.append(flight_info)
 
     # Load and process departures data
-    with open(departures_file_path, 'r') as departures_file:
+    with open(departures_file_path, 'r', encoding='utf-8') as departures_file:
         departures_data = json.load(departures_file)
         departures_flights = departures_data['result']['response']['airport']['pluginData']['schedule']['departures']['data']
         for flight in departures_flights:
-            result = check_and_update_flight('departure', flight)
+            result, flight_info = check_and_update_flight('departure', flight)
             if result == 'added':
-                added_count += 1
+                added_flights.append(flight_info)
             elif result == 'updated':
-                updated_count += 1
-            else:
-                unchanged_count += 1
+                updated_flights.append(flight_info)
 
     # Commit the transaction
     conn.commit()
 
     # Output the results
-    print(f"New flights added: {added_count}, Flights updated: {updated_count}, Flights unchanged: {unchanged_count}")
+    print(f"New flights added: {len(added_flights)}, Flights updated: {len(updated_flights)}")
+
+    # Print added flights
+    if added_flights:
+        print("\nAdded Flights:")
+        for flight in added_flights:
+            print(f" - {flight['flight_type'].capitalize()} by {flight['airline']} at {flight['scheduled_time']} (Status: {flight['status_text']})")
+
+    # Print updated flights
+    if updated_flights:
+        print("\nUpdated Flights:")
+        for flight in updated_flights:
+            print(f" - {flight['flight_type'].capitalize()} by {flight['airline']} at {flight['scheduled_time']} (Status: {flight['status_text']})")
 
 # Run the process every 5 seconds
 while True:
