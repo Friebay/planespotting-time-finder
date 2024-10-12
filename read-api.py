@@ -22,7 +22,7 @@ headers = {
 # Function to fetch data and save as JSON
 def fetch_and_save(mode, page):
     timestamp = get_current_timestamp()
-    url = base_url.format(mode=mode, page=page,timestamp=timestamp)
+    url = base_url.format(mode=mode, page=page, timestamp=timestamp)
     
     try:
         response = requests.get(url, headers=headers)
@@ -37,15 +37,18 @@ def fetch_and_save(mode, page):
     except requests.exceptions.RequestException as e:
         print(f"An error occurred: {e}")
 
-# Fetch arrivals and departures with random pause
-for mode in ["arrivals", "departures"]:
-    for page in ["-1", "1"]:
-        print(mode, page)
-        fetch_and_save(mode, page)
-        
-        # Add a random pause between 30 to 60 seconds
-        pause_duration1 = random.randint(60, 300)
-        pause_duration2 = random.randint(10, 60)
-        pause_duration = pause_duration1 + pause_duration2
-        print(f"Waiting for {pause_duration} seconds before the next request...")
-        time.sleep(pause_duration)
+# Infinite loop to run the script forever
+while True:
+    # Fetch arrivals and departures with random pause
+    for mode in ["arrivals", "departures"]:
+        for page in ["-1", "1"]:
+            print(f"Fetching {mode}, page {page}")
+            fetch_and_save(mode, page)
+            
+            # Add a random pause between 60 to 360 seconds
+            pause_duration1 = random.randint(60, 300)
+            pause_duration2 = random.randint(10, 60)
+            pause_duration2 = random.randint(10, 60)
+            pause_duration = pause_duration1 + pause_duration2
+            print(f"Waiting for {pause_duration} seconds before the next request...")
+            time.sleep(pause_duration)

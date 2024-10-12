@@ -3,164 +3,200 @@ import sqlite3
 from datetime import datetime, timezone
 import time
 
-# Load the JSON files for arrivals and departures
+# File paths for JSON data
 arrivals_file_path = 'C:/Users/zabit/Documents/GitHub/planespotting-time-finder/airport_arrivals.json'
 departures_file_path = 'C:/Users/zabit/Documents/GitHub/planespotting-time-finder/airport_departures.json'
 
-# Connect to SQLite database and save it in the specified folder
+# SQLite database connection
 db_path = 'C:/Users/zabit/Documents/GitHub/planespotting-time-finder/vilnius_airport.db'
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 
-# Create a table for storing flight data if it doesn't exist
-cursor.execute('''CREATE TABLE IF NOT EXISTS flights (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    flight_type TEXT,
-    airline TEXT,
-    aircraft_model TEXT,
-    registration TEXT,
-    origin_or_destination TEXT,
-    scheduled_time TEXT,
-    estimated_time TEXT,
-    actual_time TEXT,
-    status_live TEXT,
-    status_text TEXT,
-    status_icon TEXT,
-    last_update_time TEXT,
-    data_input_time TEXT
-)''')
+# Create flights table if it doesn't exist
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS flights (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        flight_type TEXT,
+        scheduled_time TEXT,
+        scheduled_time_other TEXT,
+        estimated_time TEXT,
+        estimated_time_other TEXT,
+        actual_time TEXT,
+        actual_time_other TEXT,
+        status_live TEXT,
+        status_text TEXT,
+        status_icon TEXT,
+        airline TEXT,
+        aircraft_model TEXT,
+        registration TEXT,
+        callsign TEXT,
+        model_code TEXT,
+        country TEXT,
+        restricted TEXT,
+        owner_name TEXT,
+        origin_or_destination TEXT,
+        last_update_time TEXT,
+        data_input_time TEXT
+    )
+''')
 
-# Function to check if a flight exists and if status fields need updating
-def check_and_update_flight(flight_type, flight):
+# Function to extract flight data
+def extract_flight_info(flight_type, flight):
     try:
-        airline = flight['flight']['airline']['name']
+        airline = flight.get('flight', {}).get('airline', {}).get('name', '')
     except:
         airline = ''
-    aircraft_model = flight['flight']['aircraft']['model']['text']
-    registration = flight['flight']['aircraft']['registration']
-    origin_or_destination = flight['flight']['airport']['origin']['name'] if flight_type == 'arrival' else flight['flight']['airport']['destination']['name']
+    aircraft = flight['flight']['aircraft']
+    owner = flight['flight']
+    
+    # Common flight details
+    aircraft_model = aircraft['model']['text']
+    model_code = aircraft['model']['code']
+    registration = aircraft['registration']
+    callsign = flight['flight']['identification']['callsign']
+    try:
+        country = aircraft['country']['name']
+    except:
+        country = ''
+    try:
+        restricted = str(aircraft['restricted'])
+    except:
+        restricted = ''
+    try:
+        owner_name = owner['owner']['name']
+    except:
+        owner_name = ''
+    
+    # Time and airport data based on flight type (arrival or departure)
+    if flight_type == 'arrival':
+        origin_or_destination = flight['flight']['airport']['origin']['name']
+        scheduled_time = flight['flight']['time']['scheduled']['arrival']
+        scheduled_time_other = flight['flight']['time']['scheduled']['departure']
+        estimated_time = flight['flight']['time'].get('estimated', {}).get('arrival')
+        estimated_time_other = flight['flight']['time'].get('estimated', {}).get('departure')
+        actual_time = flight['flight']['time']['real'].get('arrival')
+        actual_time_other = flight['flight']['time']['real'].get('departure')
+    else:
+        origin_or_destination = flight['flight']['airport']['destination']['name']
+        scheduled_time = flight['flight']['time']['scheduled']['departure']
+        scheduled_time_other = flight['flight']['time']['scheduled']['arrival']
+        estimated_time = flight['flight']['time'].get('estimated', {}).get('departure')
+        estimated_time_other = flight['flight']['time'].get('estimated', {}).get('arrival')
+        actual_time = flight['flight']['time']['real'].get('departure')
+        actual_time_other = flight['flight']['time']['real'].get('arrival')
 
-    # Scheduled and estimated times
-    scheduled_time = datetime.fromtimestamp(
-        flight['flight']['time']['scheduled']['arrival'] if flight_type == 'arrival' else flight['flight']['time']['scheduled']['departure'],
-        tz=timezone.utc
-    ).strftime('%Y-%m-%d %H:%M:%S')
+    # Format times to readable strings
+    def format_time(timestamp):
+        return datetime.fromtimestamp(timestamp, tz=timezone.utc).strftime('%Y-%m-%d %H:%M:%S') if timestamp else None
 
-    estimated_time = (datetime.fromtimestamp(
-        flight['flight']['time']['estimated']['arrival'] if flight_type == 'arrival' else flight['flight']['time']['estimated']['departure'],
-        tz=timezone.utc).strftime('%Y-%m-%d %H:%M:%S') 
-        if flight['flight']['time']['estimated'] and
-           (flight['flight']['time']['estimated'].get('arrival') if flight_type == 'arrival' else flight['flight']['time']['estimated'].get('departure')) is not None
-        else None)
+    return {
+        'airline': airline,
+        'aircraft_model': aircraft_model,
+        'model_code': model_code,
+        'registration': registration,
+        'callsign': callsign,
+        'country': country,
+        'restricted': restricted,
+        'owner_name': owner_name,
+        'origin_or_destination': origin_or_destination,
+        'scheduled_time': format_time(scheduled_time),
+        'scheduled_time_other': format_time(scheduled_time_other),
+        'estimated_time': format_time(estimated_time),
+        'estimated_time_other': format_time(estimated_time_other),
+        'actual_time': format_time(actual_time),
+        'actual_time_other': format_time(actual_time_other),
+        'status_live': str(flight['flight']['status']['live']),
+        'status_text': flight['flight']['status']['text'],
+        'status_icon': flight['flight']['status']['icon'],
+        'last_update_time': datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
+    }
 
-    # Actual time
-    real_time_key = 'arrival' if flight_type == 'arrival' else 'departure'
-    actual_time = (datetime.fromtimestamp(flight['flight']['time']['real'][real_time_key], tz=timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
-                   if flight['flight']['time']['real'][real_time_key] else None)
+# Function to check and update flight in the database
+def check_and_update_flight(flight_type, flight):
+    flight_info = extract_flight_info(flight_type, flight)
 
-    # Extract status fields
-    status_live = str(flight['flight']['status']['live'])
-    status_text = flight['flight']['status']['text']
-    status_icon = flight['flight']['status']['icon']
-
-    # Last update time
-    last_update_time = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
-
-    # Check if the flight exists based on airline, origin_or_destination, and scheduled_time
     cursor.execute('''SELECT actual_time, status_live, status_text, status_icon 
                       FROM flights WHERE airline=? AND origin_or_destination=? AND scheduled_time=? AND flight_type=?''',
-                   (airline, origin_or_destination, scheduled_time, flight_type))
+                   (flight_info['airline'], flight_info['origin_or_destination'], flight_info['scheduled_time'], flight_type))
     existing_flight = cursor.fetchone()
 
     if existing_flight:
-        # Flight exists, check if it needs to be updated
-        if (existing_flight[0] != actual_time or
-                existing_flight[1] != status_live or
-                existing_flight[2] != status_text or
-                existing_flight[3] != status_icon):
-            # Update the flight
+        if (existing_flight[0] != flight_info['actual_time'] or 
+            existing_flight[1] != flight_info['status_live'] or 
+            existing_flight[2] != flight_info['status_text'] or 
+            existing_flight[3] != flight_info['status_icon']):
             cursor.execute('''UPDATE flights
-                              SET estimated_time=?, actual_time=?, status_live=?, status_text=?, status_icon=?, last_update_time=?
+                              SET estimated_time=?, actual_time=?, status_live=?, status_text=?, status_icon=?, last_update_time=?,
+                                  scheduled_time_other=?, estimated_time_other=?, actual_time_other=?, callsign=?, model_code=?, country=?, restricted=?, owner_name=?
                               WHERE airline=? AND origin_or_destination=? AND scheduled_time=? AND flight_type=?''',
-                           (estimated_time, actual_time, status_live, status_text, status_icon, last_update_time,
-                            airline, origin_or_destination, scheduled_time, flight_type))
-            return 'updated', {
-                'flight_type': flight_type,
-                'airline': airline,
-                'scheduled_time': scheduled_time,
-                'actual_time': actual_time,
-                'status_live': status_live,
-                'status_text': status_text,
-                'status_icon': status_icon
-            }
+                           (flight_info['estimated_time'], flight_info['actual_time'], flight_info['status_live'], 
+                            flight_info['status_text'], flight_info['status_icon'], flight_info['last_update_time'],
+                            flight_info['scheduled_time_other'], flight_info['estimated_time_other'], flight_info['actual_time_other'],
+                            flight_info['callsign'], flight_info['model_code'], flight_info['country'], flight_info['restricted'], 
+                            flight_info['owner_name'], flight_info['airline'], flight_info['origin_or_destination'], 
+                            flight_info['scheduled_time'], flight_type))
+            return 'updated', flight_info
         else:
             return 'unchanged', None
     else:
-        # Insert new flight
-        cursor.execute('''INSERT INTO flights (flight_type, airline, aircraft_model, registration, origin_or_destination, scheduled_time, estimated_time, actual_time, status_live, status_text, status_icon, last_update_time, data_input_time)
-                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
-                       (flight_type, airline, aircraft_model, registration, origin_or_destination, scheduled_time, estimated_time, actual_time, status_live, status_text, status_icon,
-                        last_update_time, last_update_time))
-        return 'added', {
-            'flight_type': flight_type,
-            'airline': airline,
-            'scheduled_time': scheduled_time,
-            'actual_time': actual_time,
-            'status_live': status_live,
-            'status_text': status_text,
-            'status_icon': status_icon
-        }
+        cursor.execute('''INSERT INTO flights 
+                          (flight_type, airline, aircraft_model, registration, callsign, model_code, country, restricted, owner_name,
+                           origin_or_destination, scheduled_time, scheduled_time_other, estimated_time, estimated_time_other, 
+                           actual_time, actual_time_other, status_live, status_text, status_icon, last_update_time, data_input_time)
+                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+                       (flight_type, flight_info['airline'], flight_info['aircraft_model'], flight_info['registration'], 
+                        flight_info['callsign'], flight_info['model_code'], flight_info['country'], flight_info['restricted'], 
+                        flight_info['owner_name'], flight_info['origin_or_destination'], flight_info['scheduled_time'], 
+                        flight_info['scheduled_time_other'], flight_info['estimated_time'], flight_info['estimated_time_other'], 
+                        flight_info['actual_time'], flight_info['actual_time_other'], flight_info['status_live'], 
+                        flight_info['status_text'], flight_info['status_icon'], flight_info['last_update_time'], 
+                        flight_info['last_update_time']))
+        return 'added', flight_info
 
-# Function to load and process flights
+# Function to load and process flights from JSON files
 def process_flights():
-    # Lists to track added and updated flights
     added_flights = []
     updated_flights = []
 
-    # Load and process arrivals data
+    # Process arrivals
     with open(arrivals_file_path, 'r', encoding='utf-8') as arrivals_file:
-        arrivals_data = json.load(arrivals_file)
-        arrivals_flights = arrivals_data['result']['response']['airport']['pluginData']['schedule']['arrivals']['data']
-        for flight in arrivals_flights:
+        arrivals_data = json.load(arrivals_file)['result']['response']['airport']['pluginData']['schedule']['arrivals']['data']
+        for flight in arrivals_data:
             result, flight_info = check_and_update_flight('arrival', flight)
             if result == 'added':
                 added_flights.append(flight_info)
             elif result == 'updated':
                 updated_flights.append(flight_info)
 
-    # Load and process departures data
+    # Process departures
     with open(departures_file_path, 'r', encoding='utf-8') as departures_file:
-        departures_data = json.load(departures_file)
-        departures_flights = departures_data['result']['response']['airport']['pluginData']['schedule']['departures']['data']
-        for flight in departures_flights:
+        departures_data = json.load(departures_file)['result']['response']['airport']['pluginData']['schedule']['departures']['data']
+        for flight in departures_data:
             result, flight_info = check_and_update_flight('departure', flight)
             if result == 'added':
                 added_flights.append(flight_info)
             elif result == 'updated':
                 updated_flights.append(flight_info)
 
-    # Commit the transaction
     conn.commit()
 
-    # Output the results
+    # Print newly added and updated flights
     print(f"New flights added: {len(added_flights)}, Flights updated: {len(updated_flights)}")
-
-    # Print added flights
+    
     if added_flights:
         print("\nAdded Flights:")
         for flight in added_flights:
-            print(f" - {flight['flight_type'].capitalize()} by {flight['airline']} at {flight['scheduled_time']} (Status: {flight['status_text']})")
+            print(json.dumps(flight, indent=4))
 
-    # Print updated flights
     if updated_flights:
         print("\nUpdated Flights:")
         for flight in updated_flights:
-            print(f" - {flight['flight_type'].capitalize()} by {flight['airline']} at {flight['scheduled_time']} (Status: {flight['status_text']})")
+            print(json.dumps(flight, indent=4))
 
-# Run the process every 5 seconds
+# Main loop: process flights every 30 seconds
 while True:
     process_flights()
     time.sleep(30)
 
-# Close the connection to the database (this won't be reached due to the infinite loop, but is added for completeness)
+# Close the database connection (unreachable in this infinite loop)
 conn.close()
