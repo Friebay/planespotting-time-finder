@@ -10,13 +10,14 @@ conn = sqlite3.connect(db_path)
 
 # Query the database to get scheduled times for arrivals and departures, including airline and origin/destination
 query = '''
-SELECT flight_type, airline, origin_or_destination, scheduled_time 
+SELECT flight_type, origin_or_destination, scheduled_time, estimated_time, callsign
 FROM flights
 '''
 df = pd.read_sql_query(query, conn)
 
 # Convert scheduled_time to datetime and adjust to UTC+3
 df['scheduled_time'] = pd.to_datetime(df['scheduled_time']) + timedelta(hours=3)
+df['estimated_time'] = pd.to_datetime(df['estimated_time']) + timedelta(hours=3)
 
 # Filter for future flights only
 current_time = datetime.now()  # Adjust current time to UTC+3
@@ -62,7 +63,7 @@ else:
 
         # Print in a table format
         print("\nFlights arriving and departing during the best time window:")
-        print(tabulate(flights_in_window[['flight_type', 'airline', 'origin_or_destination', 'scheduled_time']], 
+        print(tabulate(flights_in_window[['flight_type', 'callsign', 'origin_or_destination', 'scheduled_time', 'estimated_time']], 
                         headers='keys', 
                         tablefmt='grid', 
                         showindex=False, 

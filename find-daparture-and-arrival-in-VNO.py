@@ -1,6 +1,8 @@
 import json
 import sqlite3
+import pandas as pd
 from datetime import datetime, timezone
+from tabulate import tabulate
 import time
 
 # File paths for JSON data
@@ -49,7 +51,6 @@ def extract_flight_info(flight_type, flight):
     aircraft = flight['flight']['aircraft']
     owner = flight['flight']
     
-    # Common flight details
     aircraft_model = aircraft['model']['text']
     model_code = aircraft['model']['code']
     registration = aircraft['registration']
@@ -67,7 +68,6 @@ def extract_flight_info(flight_type, flight):
     except:
         owner_name = ''
     
-    # Time and airport data based on flight type (arrival or departure)
     if flight_type == 'arrival':
         origin_or_destination = flight['flight']['airport']['origin']['name']
         scheduled_time = flight['flight']['time']['scheduled']['arrival']
@@ -85,7 +85,6 @@ def extract_flight_info(flight_type, flight):
         actual_time = flight['flight']['time']['real'].get('departure')
         actual_time_other = flight['flight']['time']['real'].get('arrival')
 
-    # Format times to readable strings
     def format_time(timestamp):
         return datetime.fromtimestamp(timestamp, tz=timezone.utc).strftime('%Y-%m-%d %H:%M:%S') if timestamp else None
 
@@ -158,7 +157,6 @@ def process_flights():
     added_flights = []
     updated_flights = []
 
-    # Process arrivals
     with open(arrivals_file_path, 'r', encoding='utf-8') as arrivals_file:
         arrivals_data = json.load(arrivals_file)['result']['response']['airport']['pluginData']['schedule']['arrivals']['data']
         for flight in arrivals_data:
@@ -168,7 +166,6 @@ def process_flights():
             elif result == 'updated':
                 updated_flights.append(flight_info)
 
-    # Process departures
     with open(departures_file_path, 'r', encoding='utf-8') as departures_file:
         departures_data = json.load(departures_file)['result']['response']['airport']['pluginData']['schedule']['departures']['data']
         for flight in departures_data:
@@ -180,18 +177,22 @@ def process_flights():
 
     conn.commit()
 
-    # Print newly added and updated flights
-    print(f"New flights added: {len(added_flights)}, Flights updated: {len(updated_flights)}")
-    
-    if added_flights:
-        print("\nAdded Flights:")
-        for flight in added_flights:
-            print(json.dumps(flight, indent=4))
+    # Print updated and added flights in a table
+    if added_flights or updated_flights:
+        changed_flights = pd.DataFrame(added_flights + updated_flights)
 
-    if updated_flights:
-        print("\nUpdated Flights:")
-        for flight in updated_flights:
-            print(json.dumps(flight, indent=4))
+        # Put the fixed code here:
+        if not changed_flights.empty:
+            available_columns = changed_flights.columns
+            columns_to_display = ['flight_type', 'callsign', 'origin_or_destination', 'scheduled_time', 'estimated_time']
+            columns_to_display = [col for col in columns_to_display if col in available_columns]
+
+            table = tabulate(changed_flights[columns_to_display],
+                             headers='keys', tablefmt='grid', showindex=False)
+            print(f"\nFlights added: {len(added_flights)}, Flights updated: {len(updated_flights)}")
+            print(table)
+        else:
+            print("No flights were added or updated.")
 
 # Main loop: process flights every 30 seconds
 while True:
