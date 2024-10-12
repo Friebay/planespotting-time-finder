@@ -9,7 +9,7 @@ def get_current_timestamp():
     return int(datetime.now().timestamp())
 
 # Base URL for the API
-base_url = "https://api.flightradar24.com/common/v1/airport.json?code=vno&plugin[]=&plugin-setting[schedule][mode]={mode}&plugin-setting[schedule][timestamp]={timestamp}&page=1&limit=100&fleet=&token="
+base_url = "https://api.flightradar24.com/common/v1/airport.json?code=vno&plugin[]=&plugin-setting[schedule][mode]={mode}&plugin-setting[schedule][timestamp]={timestamp}&page={page}&limit=100&fleet=&token="
 
 # Headers to simulate a Chrome browser request
 headers = {
@@ -20,9 +20,9 @@ headers = {
 }
 
 # Function to fetch data and save as JSON
-def fetch_and_save(mode):
+def fetch_and_save(mode, page):
     timestamp = get_current_timestamp()
-    url = base_url.format(mode=mode, timestamp=timestamp)
+    url = base_url.format(mode=mode, page=page,timestamp=timestamp)
     
     try:
         response = requests.get(url, headers=headers)
@@ -39,9 +39,13 @@ def fetch_and_save(mode):
 
 # Fetch arrivals and departures with random pause
 for mode in ["arrivals", "departures"]:
-    fetch_and_save(mode)
-    
-    # Add a random pause between 30 to 60 seconds
-    pause_duration = random.randint(30, 60)
-    print(f"Waiting for {pause_duration} seconds before the next request...")
-    time.sleep(pause_duration)
+    for page in ["-1", "1"]:
+        print(mode, page)
+        fetch_and_save(mode, page)
+        
+        # Add a random pause between 30 to 60 seconds
+        pause_duration1 = random.randint(60, 300)
+        pause_duration2 = random.randint(10, 60)
+        pause_duration = pause_duration1 + pause_duration2
+        print(f"Waiting for {pause_duration} seconds before the next request...")
+        time.sleep(pause_duration)

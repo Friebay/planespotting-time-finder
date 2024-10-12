@@ -32,7 +32,10 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS flights (
 
 # Function to check if a flight exists and if status fields need updating
 def check_and_update_flight(flight_type, flight):
-    airline = flight['flight']['airline']['name']
+    try:
+        airline = flight['flight']['airline']['name']
+    except:
+        airline = ''
     aircraft_model = flight['flight']['aircraft']['model']['text']
     registration = flight['flight']['aircraft']['registration']
     origin_or_destination = flight['flight']['airport']['origin']['name'] if flight_type == 'arrival' else flight['flight']['airport']['destination']['name']
@@ -157,7 +160,7 @@ def process_flights():
 # Run the process every 5 seconds
 while True:
     process_flights()
-    time.sleep(5)
+    time.sleep(30)
 
 # Close the connection to the database (this won't be reached due to the infinite loop, but is added for completeness)
 conn.close()
